@@ -1,0 +1,189 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background-color: #f4f6f8;
+    color: #222;
+    line-height: 1.5;
+}
+
+
+header {
+    background-color: #00328e;
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+header p {
+    margin: 0.5rem 0 0;
+}
+
+
+main {
+    max-width: 700px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+section {
+    background-color: white;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+section h2 {
+    margin-top: 0;
+}
+
+#note-form {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+#note-form label {
+    font-weight: 600;
+}
+
+#note-input,
+#note-category {
+    padding: 0.7rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font: inherit;
+}
+
+#note-input {
+    flex: 1;
+}
+
+#note-category {
+    background-color: white;
+}
+
+button {
+    background-color: #024bab;
+    color: white;
+    border: none;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+    font: inherit;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #003b87;
+    transform: translateY(-1px);
+}
+
+
+#error-message {
+    color: #c62828;
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+
+#search-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font: inherit;
+    margin-bottom: 1rem;
+}
+
+
+#notes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.note {
+    background-color: #f8fafc;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.category-personal {
+    border-left: 5px solid teal;
+}
+
+.category-work {
+    border-left: 5px solid darkred;
+}
+
+.category-study {
+    border-left: 5px solid #00328e;
+}
+
+
+.note-category {
+    display: inline-block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.note-text {
+    margin: 0 0 0.5rem;
+}
+
+.note-date {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #e5e7eb;
+    color: #555;
+}
+
+
+@media (max-width: 600px) {
+
+    main {
+        margin: 1rem auto;
+    }
+
+    #note-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #note-form input,
+    #note-form select,
+    #note-form button {
+        width: 100%;
+    }
+
+    header {
+        padding: 1.5rem 1rem;
+    }
+
+    header h1 {
+        font-size: 1.6rem;
+    }
+}
