@@ -1,104 +1,121 @@
 const form = document.querySelector("#note-form");
 const input = document.querySelector("#note-input");
-const categoryInput = document.querySelector("#note-category");
+const category = document.querySelector("#note-category");
+const searchInput = document.querySelector("#search-input");
 const notesList = document.querySelector("#notes-list");
 const noteCount = document.querySelector("#note-count");
 const errorMessage = document.querySelector("#error-message");
-const searchInput = document.querySelector("#search-input");
 
+const STORAGE_KEY = "quicknotes";
 
-let notes = [];
+let notes = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 
+function saveNotes() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+}
 
-function render(notesToRender = notes) {
-    notesList.textContent = "";
+function render() {
+  notesList.textContent = "";
 
-    notesToRender.forEach((note) => {
-        const li = document.createElement("li");
-        li.classList.add("note");
-        li.classList.add(`category-${note.category}`);
+  const searchTerm = searchInput.value.trim().toLowerCase();
 
-        const category = document.createElement("span");
-        category.classList.add("note-category");
-        category.textContent = note.category;
+  const filteredNotes = notes.filter((note) =>
+    note.text.toLowerCase().includes(searchTerm)
+  );
 
-        const text = document.createElement("p");
-        text.classList.add("note-text");
-        text.textContent = note.text;
+  if (filteredNotes.length === 0 && searchTerm !== "") {
+    const message = document.createElement("li");
+    message.textContent = "No notes match your search.";
+    notesList.appendChild(message);
+  }
 
-        const date = document.createElement("small");
-        date.classList.add("note-date");
-        date.textContent = note.createdAt;
+  filteredNotes.forEach((note) => {
+    const li = document.createElement("li");
+    li.classList.add("note", `category-${note.category}`);
 
-        const deleteButton = document.createElement("button");
-        deleteButton.type = "button";
-        deleteButton.textContent = "Delete";
+    const text = document.createElement("p");
+    text.textContent = note.text;
 
-        deleteButton.addEventListener("click", () => {
-            deleteNote(note.id);
-        });
+    const categoryLabel = document.createElement("small");
+    categoryLabel.textContent = note.category;
 
-        li.appendChild(category);
-        li.appendChild(text);
-        li.appendChild(date);
-        li.appendChild(deleteButton);
+    const date = document.createElement("small");
+    date.textContent = note.createdAt;
 
-        notesList.appendChild(li);
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+
+    deleteButton.addEventListener("click", () => {
+      deleteNote(note.id);
     });
 
-    updateCount(notesToRender);
+    li.appendChild(text);
+    li.appendChild(categoryLabel);
+    li.appendChild(date);
+    li.appendChild(deleteButton);
+
+    notesList.appendChild(li);
+  });
+
+  updateCount();
 }
 
-
-
-function updateCount(notesToCount = notes) {
-    if (notesToCount.length === 0) {
-        noteCount.textContent = "You have no notes yet.";
-    } else if (notesToCount.length === 1) {
-        noteCount.textContent = "You have 1 note.";
-    } else {
-        noteCount.textContent = `You have ${notesToCount.length} notes.`;
-    }
+function updateCount() {
+  if (notes.length === 0) {
+    noteCount.textContent = "You have no notes yet.";
+  } else if (notes.length === 1) {
+    noteCount.textContent = "You have 1 note.";
+  } else {
+    noteCount.textContent = `You have ${notes.length} notes.`;
+  }
 }
 
+function addNote(text, selectedCategory) {
+  const cleanedText = text.trim();
 
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
+  if (cleanedText === "") {
+    errorMessage.textContent = "Please type a note first.";
+    return;
+  }
 
-    const text = input.value.trim();
-    const category = categoryInput.value;
+  if (cleanedText.length > 200) {
+    errorMessage.textContent =
+      "Notes must be 200 characters or fewer.";
+    return;
+  }
 
-    if (text === "") {
-        errorMessage.textContent = "Please type a note first.";
-        return;
-    }
+  const newNote = {
+    id: Date.now(),
+    text: cleanedText,
+    category: selectedCategory,
+    createdAt: new Date().toLocaleString(),
+  };
 
-    if (text.length > 200) {
-        errorMessage.textContent =
-            "Notes must be 200 characters or fewer.";
-        return;
-    }
+  notes.push(newNote);
 
-    errorMessage.textContent = "";
+  saveNotes();
+  render();
 
-    const newNote = {
-        id: Date.now(),
-        text: text,
-        category: category,
-        createdAt: new Date().toLocaleString(),
-    };
-
-    notes.push(newNote);
-
-    render();
-
-    input.value = "";
-    input.focus();
-});
-
+  errorMessage.textContent = "";
+  input.value = "";
+  input.focus();
+}
 
 function deleteNote(id) {
-    notes = notes.filter((note) => note.id !== id);
+  notes = notes.filter((note) => note.id !== id);
 
-    render();
+  saveNotes();
+  render();
 }
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  addNote(input.value, category.value);
+});
+
+searchInput.addEventListener("input", () => {
+  render();
+});
+
+render();
